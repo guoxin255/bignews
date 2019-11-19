@@ -57,29 +57,41 @@
       </div>
     </div>
   </div>
+
+
+  <script src="./js/http.js"></script>
   <script>
+    // jq的入口函数
     $(function () {
       $('.input_sub').click(function (e) {
+        // 阻止默认行为
         e.preventDefault();
+        // 获取登录信息和登录密码
         var userName = $('.input_txt').val();
         var userPwd = $('.input_pass').val();
+        // 判断登录的信息是否为空
         if (userName == '' || userPwd == '') {
           $('.modal-body').text('亲,用户名和密码不能为空哦');
           $('#myModal').modal();
           return;
         };
         // debugger;
+        // 使用ajax,请求数据
         $.post({
-          url: 'http://localhost:8080/api/v1/admin/user/login',
+          url: window.BigNew.user_login,
           data: {
             username: userName,
             password: userPwd
           },
           success: function (res) {
-            // console.log(res);
-
+            // console.log(res.token);
+            // 把数据写入模态框
             $('.modal-body').text(res.msg);
+            // 弹出模态框
             $('#myModal').modal();
+
+            window.localStorage.setItem('token', res.token);
+
             if (res.code == 200) {
               $('#myModal').on('hidden.bs.modal', function (e) {
                 window.location.href = 'index.html';
