@@ -45,7 +45,7 @@
                     <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
                         <img src="images/2.jpg" alt="" class="user_pic" />
-                        <input style="display: block" name="userPic" type="file" id="exampleInputFile" />
+                        <input style="display: none" name="userPic" type="file" class="exampleInputFile" />
                         <!-- 给label标签的for属性赋值,值是input标签的id,那这样的话点击label就相当于点击了input -->
                         <br />
                         <label for="exampleInputFile">
@@ -89,28 +89,46 @@
                     }
                 }
             });
-            $('#exampleInputFile').on('change', function () {
+            // 给文件域注册一个change事件,当选择好图片之后,在页面显示预览效果
+
+            $('.exampleInputFile').change(function () {
+                // console.log(this.files);
+
+
                 var imgIcon = this.files[0];
-                console.log(imgIcon);
 
                 var url = URL.createObjectURL(imgIcon);
+                // 在网页上显示图片现象
                 $('.user_pic').attr('src', url);
             });
+
+            // 给修改的按钮注册点击事件
             $('button.btn-edit').click(function (e) {
-                debugger;
+                // debugger;
+                // 阻止默认行为
                 e.preventDefault();
+                //   获取表单的信息
                 var form = $('#form')[0];
+                // 获取form表单,formDate只能处理原生的dom对象,二进制!
+                //jq进行图片上传时,不需要设置请求头
                 var forData = new FormData(form);
                 $.post({
                     url: BigNew.user_edit,
                     data: forData,
+                    // 不需要设置请求类型
                     contentType: false,
+                    // 不需要进行编码
                     processData: false,
+
                     success: function (res) {
                         if (res.code == 200) {
+                            // console.log(parent);
+
                             $.get({
                                 url: window.BigNew.user_info,
                                 success: function (res) {
+                                    // console.log(parent);
+                                    // console.log(res);
                                     parent.$('.user_info>img').attr('src', res
                                         .data.userPic);
                                     parent.$('.user_info>span').html(

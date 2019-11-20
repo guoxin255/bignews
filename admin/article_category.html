@@ -79,7 +79,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary">确认</button>
+                    <button type="button" class="btn btn-primary" id="btn-confirm">确认</button>
                 </div>
             </div>
         </div>
@@ -105,22 +105,72 @@
     </script>
     <script>
         $(function () {
-            $.get({
-                url: BigNew.category_list,
-                success: function (res) {
-                    var htmlArr = template('list', res);
-                    $('tbody').html(htmlArr)
+            getData();
+
+            function getData() {
+                $.get({
+                    url: BigNew.category_list,
+                    success: function (res) {
+                        var htmlArr = template('list', res);
+                        $('tbody').html(htmlArr)
+                    }
+
+                })
+            }
+            $('#myModal').on('show.bs.modal', function (e) {
+
+                if (e.relatedTarget == $('#xinzengfenlei')[0]) {
+                    $('#exampleModalLabel').text('新增文章分类');
+                    $('#btn-confirm').text('新增').addClass('btn-success').removeClass('btn-primary');
+                } else {
+                    $('#exampleModalLabel').text('编辑文章分类');
+                    $('#btn-confirm').text('编辑').addClass('btn-primary').removeClass('btn-success');
+                    var cateId = $(e.relatedTarget).attr('data-id');
+                    $.get({
+                        url: BigNew.category_search,
+                        data: {
+                            id: cateId
+                        },
+                        success: function (res) {
+                            console.log(res);
+
+                            if (res.code == 200) {
+                                $('#recipient-name').val(res.data[0].name);
+                                $('#message-text').val(res.data[0].slug);
+                                $('#categoryId').val(res.data[0].id);
+
+                            }
+                        }
+
+                    })
                 }
 
+                // 给新增按钮注册点击事件
+                $('#btn-confirm').on('click', function () {
+                    if ($(this).hasClass('btn-success')) {
+
+                    } else {
+                        $('#recipient-name').val();
+                        $('#message-text').val();
+                        $('#categoryId').val();
+                        $.post({
+                            url: BigNew.category_edit,
+                            data: {
+                                id: id,
+                                name: name,
+                                slug: slug
+                            },
+                            success: function (res) {
+                                $('#myModal').modal('hide');
+                                getData()
+
+                            }
+                        })
+
+                    }
+                })
+
             })
-        })
-        $('#myModal').on('hidden.bs.modal', function (e) {
-
-            if (e.relatedTarget == $('#xinzengfenlei')[0]) {
-
-            } else {
-
-            }
         })
     </script>
 
