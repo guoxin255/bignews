@@ -172,7 +172,7 @@
                     id: artId
                 },
                 success: function (res) {
-                    console.log(res);
+                    // console.log(res);
                     if (res.code == 200) {
                         $('#inputTitle').val(res.data.title);
                         $(".article_cover").attr('src', res.data.cover);
@@ -190,29 +190,54 @@
 
             // 给修改注册点击事件
             $('.btn-edit').click(function (e) {
+                // 阻止默认行为
+                // 获得数据,获取表单,表单元素必须要有name
+                //  图片以二进制的方式上传
                 e.preventDefault();
                 var form = $('#form')[0];
                 var fd = new FormData(form);
-                fd.append(editor.txt.html());
+                // console.log(editor.txt.html());
+                fd.append('content', editor.txt.html())
                 fd.append('state', '已发布')
 
-                // $.post({
-                //     url: BigNew.category_edit,
-                //     data: {
-                //         id:
-                //     },
-
-                // })
-
-
-
-
-
+                $.post({
+                    url: BigNew.article_edit,
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('修改成功');
+                            window.history.back();
+                        }
+                    }
+                })
 
             })
+            // 存草稿
+            $('.btn-default').click(function (e) {
+                e.preventDefault();
+                var form = $('#form')[0];
+                var fr = new FormData(form);
+                fr.append('content', editor.txt.html());
+                fr.append('state', '已发布')
+                $.post({
+                    url: BigNew.article_edit,
+                    data: fr,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        if (res.code == 200) {
+                            alert('存档成功');
+                            window.history.back();
+                        }
+                    }
 
-            // 阻止默认行为
-            // 获得数据,获取表单,表单元素必须要有name
+                })
+            })
+
+
+
 
 
         })
